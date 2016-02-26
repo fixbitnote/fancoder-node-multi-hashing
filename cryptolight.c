@@ -55,6 +55,7 @@ static void (* const extra_hashes[4])(const void *, size_t, char *) = {
 extern int aesb_single_round(const uint8_t *in, uint8_t*out, const uint8_t *expandedKey);
 extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *expandedKey);
 
+// Credit to Wolf for optimizing this function
 static inline size_t e2i(const uint8_t* a) {
     //return (*((uint64_t*) a) / AES_BLOCK_SIZE) & (MEMORY / AES_BLOCK_SIZE - 1);
     return ((uint32_t *)a)[0] & 0xFFFF0;
