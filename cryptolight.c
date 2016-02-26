@@ -57,8 +57,8 @@ extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *exp
 
 // Credit to Wolf for optimizing this function
 static inline size_t e2i(const uint8_t* a) {
-    //return (*((uint64_t*) a) / AES_BLOCK_SIZE) & (MEMORY / AES_BLOCK_SIZE - 1);
-    return ((uint32_t *)a)[0] & 0xFFFF0;
+    return (*((uint64_t*) a) / AES_BLOCK_SIZE) & (MEMORY / AES_BLOCK_SIZE - 1);
+    //return ((uint32_t *)a)[0] & 0xFFFF0;
 }
 
 static void mul(const uint8_t* a, const uint8_t* b, uint8_t* res) {
