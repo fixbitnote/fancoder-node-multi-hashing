@@ -34,7 +34,7 @@ static void do_blake_hash(const void* input, size_t len, char* output) {
     blake256_hash((uint8_t*)output, input, len);
 }
 
-void do_groestl_hash(const void* input, size_t len, char* output) {
+void do_groestl_hash2(const void* input, size_t len, char* output) {
     groestl(input, len * 8, (uint8_t*)output);
 }
 
@@ -49,7 +49,7 @@ static void do_skein_hash(const void* input, size_t len, char* output) {
 }
 
 static void (* const extra_hashes[4])(const void *, size_t, char *) = {
-    do_blake_hash, do_groestl_hash, do_jh_hash, do_skein_hash
+    do_blake_hash, do_groestl_hash2, do_jh_hash, do_skein_hash
 };
 
 extern int aesb_single_round(const uint8_t *in, uint8_t*out, const uint8_t *expandedKey);
