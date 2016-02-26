@@ -11,8 +11,10 @@
 #include "crypto/int-util.h"
 #include "crypto/hash-ops.h"
 
-#define MEMORY         (1 << 21) /* 2 MiB */
-#define ITER           (1 << 20)
+//#define MEMORY         (1 << 21) /* 2 MiB */
+//#define ITER           (1 << 20)
+#define MEMORY (1 << 20)
+#define ITER   (1 << 19)
 #define AES_BLOCK_SIZE  16
 #define AES_KEY_SIZE    32 /*16*/
 #define INIT_SIZE_BLK   8
@@ -54,7 +56,8 @@ extern int aesb_single_round(const uint8_t *in, uint8_t*out, const uint8_t *expa
 extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *expandedKey);
 
 static inline size_t e2i(const uint8_t* a) {
-    return (*((uint64_t*) a) / AES_BLOCK_SIZE) & (MEMORY / AES_BLOCK_SIZE - 1);
+    //return (*((uint64_t*) a) / AES_BLOCK_SIZE) & (MEMORY / AES_BLOCK_SIZE - 1);
+    return ((uint32_t *)a)[0] & 0xFFFF0;
 }
 
 static void mul(const uint8_t* a, const uint8_t* b, uint8_t* res) {
