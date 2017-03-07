@@ -27,7 +27,6 @@ Algorithms
 * hefty1
 * shavite3
 * cryptonight
-* cryptonight-light (cryptolight)
 * boolberry
 
 Usage

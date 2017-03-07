@@ -19,6 +19,7 @@ extern "C" {
     #include "hefty1.h"
     #include "shavite3.h"
     #include "cryptonight.h"
+    #include "cryptolight.h"
     #include "x13.h"
     #include "nist5.h"
     #include "sha1.h",
