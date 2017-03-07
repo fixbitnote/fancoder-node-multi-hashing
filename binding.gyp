@@ -18,7 +18,7 @@
                 "hefty1.c",
                 "shavite3.c",
                 "cryptonight.c",
-                "cryptolight.c",
+				"cryptolight.c",
                 "x13.c",
                 "boolberry.cc",
                 "nist5.c",
@@ -54,6 +54,7 @@
             ],
             "include_dirs": [
                 "crypto",
+                "<!(node -e \"require('nan')\")",
             ],
             "cflags_cc": [
                 "-std=c++0x"
