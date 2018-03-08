@@ -13,12 +13,12 @@
 
 #define MEMORY         (1 << 21) /* 2 MiB */
 #define ITER           (1 << 20)
-//#define MEMORY (1 << 20)
-//#define ITER   (1 << 19)
 #define AES_BLOCK_SIZE  16
 #define AES_KEY_SIZE    32 /*16*/
 #define INIT_SIZE_BLK   8
 #define INIT_SIZE_BYTE (INIT_SIZE_BLK * AES_BLOCK_SIZE)
+#define TOTALBLOCKS (MEMORY / AES_BLOCK_SIZE)
+#define state_index(x,div) (((*((uint64_t *)x) >> 4) & (TOTALBLOCKS /(div) - 1)) << 4)
 
 #pragma pack(push, 1)
 union cn_slow_hash_state {
@@ -152,11 +152,11 @@ void cryptolight_hash(const char* input, char* output, uint32_t len) {
          */
         /* Iteration 1 */
         j = e2i(ctx->a);
-        aesb_single_round(&ctx->long_state[j * AES_BLOCK_SIZE], ctx->c, ctx->a);
-        xor_blocks_dst(ctx->c, ctx->b, &ctx->long_state[j * AES_BLOCK_SIZE]);
+        aesb_single_round(&ctx->long_state[state_index(j,4)], ctx->c, ctx->a);
+        xor_blocks_dst(ctx->c, ctx->b, &ctx->long_state[state_index(j,4)]);
         /* Iteration 2 */
         mul_sum_xor_dst(ctx->c, ctx->a,
-                &ctx->long_state[e2i(ctx->c) * AES_BLOCK_SIZE]);
+                &ctx->long_state[state_index(j,4)]);
         copy_block(ctx->b, ctx->c);
     }
 
