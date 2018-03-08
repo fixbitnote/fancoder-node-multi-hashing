@@ -11,10 +11,10 @@
 #include "crypto/int-util.h"
 #include "crypto/hash-ops.h"
 
-//#define MEMORY         (1 << 21) /* 2 MiB */
-//#define ITER           (1 << 20)
-#define MEMORY (1 << 20)
-#define ITER   (1 << 19)
+#define MEMORY         (1 << 21) /* 2 MiB */
+#define ITER           (1 << 20)
+//#define MEMORY (1 << 20)
+//#define ITER   (1 << 19)
 #define AES_BLOCK_SIZE  16
 #define AES_KEY_SIZE    32 /*16*/
 #define INIT_SIZE_BLK   8
@@ -131,7 +131,7 @@ void cryptolight_hash(const char* input, char* output, uint32_t len) {
     size_t i, j;
 
     oaes_key_import_data(ctx->aes_ctx, ctx->aes_key, AES_KEY_SIZE);
-    for (i = 0; i < MEMORY / INIT_SIZE_BYTE; i++) {
+    for (i = 0; i < MEMORY / 4 / INIT_SIZE_BYTE; i++) {
         for (j = 0; j < INIT_SIZE_BLK; j++) {
             aesb_pseudo_round(&ctx->text[AES_BLOCK_SIZE * j],
                     &ctx->text[AES_BLOCK_SIZE * j],
@@ -162,7 +162,7 @@ void cryptolight_hash(const char* input, char* output, uint32_t len) {
 
     memcpy(ctx->text, ctx->state.init, INIT_SIZE_BYTE);
     oaes_key_import_data(ctx->aes_ctx, &ctx->state.hs.b[32], AES_KEY_SIZE);
-    for (i = 0; i < MEMORY / INIT_SIZE_BYTE; i++) {
+    for (i = 0; i < MEMORY / 4 / INIT_SIZE_BYTE; i++) {
         for (j = 0; j < INIT_SIZE_BLK; j++) {
             xor_blocks(&ctx->text[j * AES_BLOCK_SIZE],
                     &ctx->long_state[i * INIT_SIZE_BYTE + j * AES_BLOCK_SIZE]);
