@@ -11,14 +11,12 @@
 #include "crypto/int-util.h"
 #include "crypto/hash-ops.h"
 
-#define MEMORY         (1 << 21) /* 2 MiB */
-#define ITER           (1 << 20)
+#define MEMORY (1 << 19)
+#define ITER   (1 << 19)
 #define AES_BLOCK_SIZE  16
-#define AES_KEY_SIZE    32 /*16*/
+#define AES_KEY_SIZE    32
 #define INIT_SIZE_BLK   8
 #define INIT_SIZE_BYTE (INIT_SIZE_BLK * AES_BLOCK_SIZE)
-#define TOTALBLOCKS (MEMORY / AES_BLOCK_SIZE)
-#define state_index(x,div) (((*((uint64_t *)x) >> 4) & (TOTALBLOCKS /(div) - 1)) << 4)
 
 #pragma pack(push, 1)
 union cn_slow_hash_state {
@@ -131,7 +129,7 @@ void cryptolight_hash(const char* input, char* output, uint32_t len) {
     size_t i, j;
 
     oaes_key_import_data(ctx->aes_ctx, ctx->aes_key, AES_KEY_SIZE);
-    for (i = 0; i < MEMORY / 4 / INIT_SIZE_BYTE; i++) {
+    for (i = 0; i < MEMORY / INIT_SIZE_BYTE; i++) {
         for (j = 0; j < INIT_SIZE_BLK; j++) {
             aesb_pseudo_round(&ctx->text[AES_BLOCK_SIZE * j],
                     &ctx->text[AES_BLOCK_SIZE * j],
@@ -152,17 +150,17 @@ void cryptolight_hash(const char* input, char* output, uint32_t len) {
          */
         /* Iteration 1 */
         j = e2i(ctx->a);
-        aesb_single_round(&ctx->long_state[state_index(j,4)], ctx->c, ctx->a);
-        xor_blocks_dst(ctx->c, ctx->b, &ctx->long_state[state_index(j,4)]);
+        aesb_single_round(&ctx->long_state[j * AES_BLOCK_SIZE], ctx->c, ctx->a);
+        xor_blocks_dst(ctx->c, ctx->b, &ctx->long_state[j * AES_BLOCK_SIZE]);
         /* Iteration 2 */
         mul_sum_xor_dst(ctx->c, ctx->a,
-                &ctx->long_state[state_index(j,4)]);
+                &ctx->long_state[e2i(ctx->c) * AES_BLOCK_SIZE]);
         copy_block(ctx->b, ctx->c);
     }
 
     memcpy(ctx->text, ctx->state.init, INIT_SIZE_BYTE);
     oaes_key_import_data(ctx->aes_ctx, &ctx->state.hs.b[32], AES_KEY_SIZE);
-    for (i = 0; i < MEMORY / 4 / INIT_SIZE_BYTE; i++) {
+    for (i = 0; i < MEMORY / INIT_SIZE_BYTE; i++) {
         for (j = 0; j < INIT_SIZE_BLK; j++) {
             xor_blocks(&ctx->text[j * AES_BLOCK_SIZE],
                     &ctx->long_state[i * INIT_SIZE_BYTE + j * AES_BLOCK_SIZE]);
