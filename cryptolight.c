@@ -17,6 +17,8 @@
 #define AES_KEY_SIZE    32
 #define INIT_SIZE_BLK   8
 #define INIT_SIZE_BYTE (INIT_SIZE_BLK * AES_BLOCK_SIZE)
+#define TOTALBLOCKS = (MEMORY / AES_BLOCK_SIZE)
+#define state_index(x,div) (((*((uint64_t *)x) >> 4) & (TOTALBLOCKS /(div) - 1)) << 4)
 
 #pragma pack(push, 1)
 union cn_slow_hash_state {
@@ -54,7 +56,7 @@ extern int aesb_single_round(const uint8_t *in, uint8_t*out, const uint8_t *expa
 extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *expandedKey);
 
 static inline size_t e2i(const uint8_t* a) {
-    return (*((uint64_t*) a) / AES_BLOCK_SIZE) & (MEMORY / AES_BLOCK_SIZE - 1);
+    return (*((uint64_t*) a) / AES_BLOCK_SIZE) & ((MEMORY / AES_BLOCK_SIZE)/4 - 1);
 }
 
 static void mul(const uint8_t* a, const uint8_t* b, uint8_t* res) {
